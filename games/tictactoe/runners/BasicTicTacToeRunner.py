@@ -1,8 +1,9 @@
 import os
 
 from agents.CommandLineAgent import CommandLineAgent
-from agents.PPOWithMultipleTrajectoriesMultiOutputsAgent import PPOWithMultipleTrajectoriesMultiOutputsAgent
+from agents.MOISMCTSWithRandomRolloutsAgent import MOISMCTSWithRandomRolloutsAgent
 from agents.RandomAgent import RandomAgent
+from games.tictactoe.runners.SafeTicTacToeRunner import SafeTicTacToeRunner
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"  # see issue #152
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
@@ -75,7 +76,8 @@ class BasicTicTacToeRunner(GameRunner):
 
 
 if __name__ == "__main__":
-    # Should converge towards 0.97 wins% quite quickly
-    print("PPOWithMultipleTrajectoriesMultiOutputsAgent VS RandomAgent")
-    print(BasicTicTacToeRunner(PPOWithMultipleTrajectoriesMultiOutputsAgent(9, 9), RandomAgent(),
+    # Should be perfect, but takes time
+    print("MOISMCTSWithRandomRolloutsAgent VS RandomAgent")
+    print(BasicTicTacToeRunner(MOISMCTSWithRandomRolloutsAgent(100, SafeTicTacToeRunner(RandomAgent(), RandomAgent())),
+                               RandomAgent(),
                                print_and_reset_score_history_threshold=1000).run(100000000000))

@@ -30,3 +30,6 @@ class GameState:
 
     def copy_game_state(self):
         raise NotImplementedError
+
+    def get_current_scores(self):
+        raise NotImplementedError
