@@ -1,18 +1,14 @@
 import os
 
-from keras.engine.saving import load_model
-from tensorflow import keras
-
 from agents.CommandLineAgent import CommandLineAgent
+from agents.PPOWithMultipleTrajectoriesMultiOutputsAgent import PPOWithMultipleTrajectoriesMultiOutputsAgent
 from agents.RandomAgent import RandomAgent
-from agents.ReinforceClassicWithMultipleTrajectoriesAgent import ReinforceClassicWithMultipleTrajectoriesAgent
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"  # see issue #152
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 from environments import Agent
 from environments.GameRunner import GameRunner
-from environments.GameState import GameState
 from games.tictactoe.TicTacToeGameState import TicTacToeGameState
 import numpy as np
 
@@ -79,21 +75,7 @@ class BasicTicTacToeRunner(GameRunner):
 
 
 if __name__ == "__main__":
-    # print("Rdm vs Rdm")
-    # print(BasicTicTacToeRunner(RandomAgent(),
-    #                            RandomAgent(),
-    #                            print_and_reset_score_history_threshold=100).run(1000000))
-
-    # print("Rdm vs ReinforceMonteCarloEpisodicAgent (should be around 80% wins for player 2)")
-    # print(BasicTicTacToeRunner(RandomRolloutAgent(3, BasicTicTacToeRunner(RandomAgent(), RandomAgent())),
-    #                            ReinforceMonteCarloEpisodicAgent(9, 9, lr=0.001, gamma=0.9, num_layers=5,
-    #                                                             num_hidden_per_layer=64),
-    #                            print_and_reset_score_history_threshold=100).run(100000))
-
-    # print("Rdm vs ReinforceMonteCarloEpisodicAgent (should be around 80% wins for player 2)")
-    # print(BasicTicTacToeRunner(CommandLineAgent(), CommandLineAgent(),
-    #                            print_and_reset_score_history_threshold=100).run(100000000))
-
-    print(BasicTicTacToeRunner(ReinforceClassicWithMultipleTrajectoriesAgent(9, 9), RandomAgent(),
-                               print_and_reset_score_history_threshold=100).run(100000000000))
-
+    # Should converge towards 0.97 wins% quite quickly
+    print("PPOWithMultipleTrajectoriesMultiOutputsAgent VS RandomAgent")
+    print(BasicTicTacToeRunner(PPOWithMultipleTrajectoriesMultiOutputsAgent(9, 9), RandomAgent(),
+                               print_and_reset_score_history_threshold=1000).run(100000000000))
