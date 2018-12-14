@@ -1,4 +1,7 @@
 .idea/
 .git/
-__pycache__/
 .pytest_cache/
+__pycache__/
+tf_logs/
+tensorflow_101/
+*.pyc
