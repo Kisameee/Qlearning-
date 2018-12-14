@@ -17,7 +17,7 @@ This project aim to teach us reinforcement learning by implementing the popular 
 You have to use the reinforcement_battle.py in command line.
 For example :
     
-    python Random Random TicTacToe 100 --no-gpu
+    python reinforcement_battle.py Random Random TicTacToe 100 --no-gpu
 
 Will run 100 games of TicTacToe with a Random agent vs another Random Agent on CPU
 You can configure things in the reinforcement_ecosytem/config.py
