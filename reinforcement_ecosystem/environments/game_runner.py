@@ -9,6 +9,7 @@ Module for defining GameRunners
 
 import tensorflow as tf
 
+from reinforcement_ecosystem.config import PRINT_EACH
 from .agent import Agent
 from .game_state import GameState
 
@@ -38,8 +39,10 @@ class GameRunner:
         :param max_rounds: The number maximum of rounds to play the game
         """
         episode_id = 0
+        print_every = int(max_rounds * PRINT_EACH)
         for mr in range(max_rounds):
-            print('Round N :', str(mr))
+            if mr % print_every == 0:
+                print('Round N :', str(mr))
             stats = self._run(initial_game_state)
             value_summary = [
                     tf.Summary.Value(tag='agent1_action_mean_duration',

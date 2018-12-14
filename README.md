@@ -2,15 +2,17 @@
 
 This project aim to teach us reinforcement learning by implementing the popular RL models.
 
+
 ## TODO
 - Better docstrings (understand '???' comments)
 - Better type hints (find type of 'Any' type hints)
 - Transform get methods in python property
 - Tests everything
-- Comments Windjamers game
 - Add CSV logs
 - Add list of agents and games in command line
+- Comments Windjamers game
 - Bug in WindJammers ?
+
 
 ## How to use ?
 
@@ -20,4 +22,5 @@ For example :
     python reinforcement_battle.py Random Random TicTacToe 100 --no-gpu
 
 Will run 100 games of TicTacToe with a Random agent vs another Random Agent on CPU
+You can also give arguments to the agents or the game stats as a quoted dict see help for more information.
 You can configure things in the reinforcement_ecosytem/config.py

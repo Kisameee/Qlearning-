@@ -11,3 +11,4 @@ import os
 
 
 TF_LOG_DIR = '{}/../tf_logs'.format(os.path.dirname(os.path.realpath(__file__)))
+PRINT_EACH = 0.1
