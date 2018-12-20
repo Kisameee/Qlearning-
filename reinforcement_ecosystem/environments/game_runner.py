@@ -7,9 +7,11 @@ Module for defining GameRunners
 """
 
 
+from csv import DictWriter
+
 import tensorflow as tf
 
-from reinforcement_ecosystem.config import PRINT_EACH
+from reinforcement_ecosystem.config import *
 from .agent import Agent
 from .game_state import GameState
 
@@ -19,15 +21,18 @@ class GameRunner:
     GameRunner base class
     """
 
-    def __init__(self, agent1: Agent, agent2: Agent, tf_log_dir: str) -> None:
+    def __init__(self, agent1: Agent, agent2: Agent, csv_data: dict, log_name: str) -> None:
         """
         Initializer for Game Runner
         :param agent1: The first player agent
         :param agent2: The second player agent
-        :param tf_log_dir: Where Tensorflow should log
+        :param csv_data: The CSV data to use as logging
+        :param log_name: The name of the logs
         """
         self.agents = agent1, agent2
-        self.writer = tf.summary.FileWriter(tf_log_dir)
+        self.csv_writer = open('{}/{}.csv'.format(CSV_LOG_DIR, log_name), 'w')
+        self.tf_writer = tf.summary.FileWriter('{}/{}'.format(TF_LOG_DIR, log_name))
+        self.csv_data = csv_data
 
     def _run(self, initial_game_state: GameState) -> dict:
         raise NotImplementedError()
@@ -40,6 +45,9 @@ class GameRunner:
         """
         episode_id = 0
         print_every = int(max_rounds * PRINT_EACH)
+        csv_log_every = int(max_rounds * CSV_LOG_EACH)
+        dw = DictWriter(self.csv_writer, fieldnames=self.csv_data.keys())
+        dw.writeheader()
         for mr in range(max_rounds):
             if mr % print_every == 0:
                 print('Round N :', str(mr))
@@ -54,9 +62,21 @@ class GameRunner:
                     tf.Summary.Value(tag='agent2_accumulated_reward',
                                      simple_value=stats['mean_accumulated_reward_sum_a2'])
                 ]
-            self.writer.add_summary(tf.Summary(value=value_summary), episode_id)
+            self.tf_writer.add_summary(tf.Summary(value=value_summary), episode_id)
+            if mr % csv_log_every == 0:
+                self.csv_data['round_number'] = episode_id
+                self.csv_data['agent1_mean_action_duration_sum'] = stats['mean_action_duration_sum_a1']
+                self.csv_data['agent1_mean_accumulated_reward_sum'] = stats['mean_accumulated_reward_sum_a1']
+                self.csv_data['agent2_mean_action_duration_sum'] = stats['mean_action_duration_sum_a2']
+                self.csv_data['agent2_mean_accumulated_reward_sum'] = stats['mean_accumulated_reward_sum_a2']
+                dw.writerow(self.csv_data)
             episode_id += 1
 
+    def __del__(self) -> None:
+        """
+        Actions to do when the object is cleanup by the VM
+        """
+        self.csv_writer.close()
 
     # @classmethod
     # def runner_helper(cls, game: str, num_games: int, war_name: str, agent1_name: str,

@@ -15,7 +15,6 @@ import json
 # import reinforcement_ecosystem.games as games
 from reinforcement_ecosystem.agents import *
 from reinforcement_ecosystem.games import *
-from reinforcement_ecosystem.config import TF_LOG_DIR
 
 
 parser = argparse.ArgumentParser(description='Command line tool for battling two agents on a game')
@@ -30,6 +29,10 @@ parser.add_argument('--gs_args', type=str, help='GameState arguments', default='
 
 
 if __name__ == '__main__':
+    if not os.path.exists('./tf_logs'):
+        os.mkdir('./tf_logs', 0o755)
+    if not os.path.exists('./csv_logs'):
+        os.mkdir('./csv_logs', 0o755)
     args = vars(parser.parse_args())
     agent1 = globals()['{}Agent'.format(args['agent1'])]  # try getattr ?
     agent1_args = json.loads(args['agent1_args']) if args['agent1_args'] else {}
@@ -38,11 +41,23 @@ if __name__ == '__main__':
     game_runner = globals()['{}Runner'.format(args['game'])]  # try getattr ?
     game_state = globals()['{}GameState'.format(args['game'])]  # try getattr ?
     gs_args = json.loads(args['gs_args']) if args['gs_args'] else {}
-    log_dir = '{}/{}__{}_VS_{}__{}'.format(TF_LOG_DIR, args['game'], args['agent1'],
-                                           args['agent2'], str(args['max_rounds']))
+    log_name = '{}__{}_VS_{}__{}'.format(args['game'], args['agent1'],
+                                         args['agent2'], str(args['max_rounds']))
     if args['no_gpu']:
         os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'  # see issue #152
         os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
     print(args['agent1'], 'VS', args['agent2'], 'on', args['game'], 'for', str(args['max_rounds']), 'rounds')
-    game_runner(agent1(**agent1_args), agent2(**agent2_args), log_dir)\
+    csv_data = {
+        'game': args['game'],
+        'battle_name': '{}_VS_{}'.format(args['agent1'], args['agent2']),
+        'num_of_games': args['max_rounds'],
+        'agent1_name': args['agent1'],
+        'round_number': 0,
+        'agent1_mean_action_duration_sum': 0,
+        'agent1_mean_accumulated_reward_sum': 0,
+        'agent2_name': args['agent2'],
+        'agent2_mean_action_duration_sum': 0,
+        'agent2_mean_accumulated_reward_sum': 0
+    }
+    game_runner(agent1(**agent1_args), agent2(**agent2_args), csv_data, log_name)\
         .run(game_state(**gs_args), args['max_rounds'])

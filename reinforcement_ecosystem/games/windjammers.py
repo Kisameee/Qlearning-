@@ -17,14 +17,15 @@ from reinforcement_ecosystem.environments import InformationState, GameState, Ag
 
 class WindJammersRunner(GameRunner):
 
-    def __init__(self, agent1: Agent, agent2: Agent, tf_log_dir):
+    def __init__(self, agent1: Agent, agent2: Agent, csv_data: dict, log_name: str):
         """
         Initializer for Game Runner
         :param agent1: The first player agent
         :param agent2: The second player agent
-        :param tf_log_dir: Where Tensorflow should log
+        :param csv_data: The CSV data to use as logging
+        :param log_name: The name of the logs
         """
-        super(WindJammersRunner, self).__init__(agent1, agent2, tf_log_dir)
+        super(WindJammersRunner, self).__init__(agent1, agent2, csv_data, log_name)
 
     def _run(self, initial_game_state: GameState):
         """
