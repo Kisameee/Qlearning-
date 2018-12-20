@@ -32,7 +32,7 @@ parser.add_argument('--gs_args', type=str, help='GameState arguments', default='
 if __name__ == '__main__':
     args = vars(parser.parse_args())
     agent1 = globals()['{}Agent'.format(args['agent1'])]  # try getattr ?
-    agent1_args = json.loads(args['agent1_args']) if args['agent2_args'] else {}
+    agent1_args = json.loads(args['agent1_args']) if args['agent1_args'] else {}
     agent2 = globals()['{}Agent'.format(args['agent2'])]  # try getattr ?
     agent2_args = json.loads(args['agent2_args']) if args['agent2_args'] else {}
     game_runner = globals()['{}Runner'.format(args['game'])]  # try getattr ?

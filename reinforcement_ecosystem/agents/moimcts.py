@@ -35,12 +35,12 @@ class ValueNetworkBrain:
     ValueNetworkBrain class for ???
     """
 
-    def __init__(self, state_size, num_players: int, num_layers: int = 2, num_neurons_per_layer: int = 512,
+    def __init__(self, state_size: int, num_players: int, num_layers: int = 2, num_neurons_per_layer: int = 512,
                  session: tf.Session = None) -> None:
         """
         Initializer for the `ValueNetworkBrain` class
         :param state_size: ???
-        :param num_players: ???
+        :param num_players: The number of players
         :param num_layers: The number of layer for the model
         :param num_neurons_per_layer: The number of neurons per layers
         :param session: The `tf.Session` to use

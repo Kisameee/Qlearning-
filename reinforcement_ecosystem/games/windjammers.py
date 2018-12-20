@@ -48,13 +48,13 @@ class WindJammersRunner(GameRunner):
                 action = self.agents[current_player].act(current_player, info_state, action_ids)
                 action_time = time() - action_time
                 mean_action_duration_sum[current_player] += action_time
-                # WARNING : Two Players Zero Sum Game Hypothesis
-                (gs, score, terminal) = gs.step(current_player, action)
-                self.agents[0].observe(score, terminal)
-                self.agents[1].observe(-score, terminal)
-                mean_accumulated_reward_sum[0] = score
-                mean_accumulated_reward_sum[1] = -score
-                round_step += 1
+            # WARNING : Two Players Zero Sum Game Hypothesis
+            (gs, score, terminal) = gs.step(current_player, action)
+            self.agents[0].observe(score, terminal)
+            self.agents[1].observe(-score, terminal)
+            mean_accumulated_reward_sum[0] = score
+            mean_accumulated_reward_sum[1] = -score
+            round_step += 1
         stats = {
             'round_step': round_step,
             'mean_action_duration_sum_a1': mean_action_duration_sum[0],
