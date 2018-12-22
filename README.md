@@ -1,2 +1,2 @@
 # Qlearning-
-This repository contains qome Qleaninrg algotithms applied to Windjammers
+This repository contains some Qleaninrg algotithms applied to Windjammers
