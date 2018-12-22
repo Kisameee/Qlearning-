@@ -46,6 +46,9 @@ class GameRunner:
         episode_id = 0
         print_every = int(max_rounds * PRINT_EACH)
         csv_log_every = int(max_rounds * CSV_LOG_EACH)
+        agent_1_wins = 0.0
+        agent_2_wins = 0.0
+        mean_run_duration = 0.0
         dw = DictWriter(self.csv_writer, fieldnames=self.csv_data.keys())
         dw.writeheader()
         for mr in range(max_rounds):
@@ -63,12 +66,16 @@ class GameRunner:
                                      simple_value=stats['mean_accumulated_reward_sum_a2'])
                 ]
             self.tf_writer.add_summary(tf.Summary(value=value_summary), episode_id)
+            agent_1_wins += stats['mean_accumulated_reward_sum_a1']
+            agent_2_wins += stats['mean_accumulated_reward_sum_a2']
+            mean_run_duration += stats['mean_action_duration_sum_a1'] + stats['mean_action_duration_sum_a2']
             if mr % csv_log_every == 0:
-                self.csv_data['round_number'] = episode_id
+                self.csv_data['round_number'] = mr
                 self.csv_data['agent1_mean_action_duration_sum'] = stats['mean_action_duration_sum_a1']
-                self.csv_data['agent1_mean_accumulated_reward_sum'] = stats['mean_accumulated_reward_sum_a1']
+                self.csv_data['agent1_mean_accumulated_reward_sum'] = agent_1_wins
                 self.csv_data['agent2_mean_action_duration_sum'] = stats['mean_action_duration_sum_a2']
-                self.csv_data['agent2_mean_accumulated_reward_sum'] = stats['mean_accumulated_reward_sum_a2']
+                self.csv_data['agent2_mean_accumulated_reward_sum'] = agent_2_wins
+                self.csv_data['mean_run_duration'] = mean_run_duration
                 dw.writerow(self.csv_data)
             episode_id += 1
 
@@ -77,25 +84,3 @@ class GameRunner:
         Actions to do when the object is cleanup by the VM
         """
         self.csv_writer.close()
-
-    # @classmethod
-    # def runner_helper(cls, game: str, num_games: int, war_name: str, agent1_name: str,
-    #                   agent1: 'Agent', agent2_name: str, agent2: 'Agent', stats_csv: 'IO', **kwargs) -> None:
-    #     print(war_name, str(num_games), 'runs')
-    #     score = cls(agent1, agent2, **kwargs).run(num_games)
-    #     game_stats = OrderedDict({
-    #         'game': game,
-    #         'battle_name': war_name,
-    #         'num_of_games': num_games,
-    #         'agent1_name': agent1_name,
-    #         'agent1_nb_victory': score[0],
-    #         'agent1_victory_rate': (score[0] / num_games) * 100,
-    #         'agent2_name': agent2_name,
-    #         'agent2_nb_victory': score[1],
-    #         'agent2_victory_rate': (score[1] / num_games) * 100,
-    #         'draw_nb': score[2],
-    #         'draw_rate': (score[2] / num_games) * 100
-    #     })
-    #     pprint(game_stats)
-    #     dw = csv.DictWriter(stats_csv, fieldnames=game_stats.keys())
-    #     dw.writerow(game_stats)

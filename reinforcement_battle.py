@@ -7,17 +7,20 @@ Module for command line battle between agents on a game
 """
 
 
-import os
 import argparse
+from itertools import product
 import json
+from pprint import pprint
+import os
 
 # import reinforcement_ecosystem.agents as agents
 # import reinforcement_ecosystem.games as games
 from reinforcement_ecosystem.agents import *
 from reinforcement_ecosystem.games import *
 
-
-parser = argparse.ArgumentParser(description='Command line tool for battling two agents on a game')
+list_of_agents_couple = set(product((el for el in globals().keys() if 'Agent' in el), repeat=2))
+parser = argparse.ArgumentParser(description='Command line tool for battling two agents on a game',
+                                 epilog='List of all agents couples :\n' + str(list_of_agents_couple))
 parser.add_argument('agent1', type=str, help='The Player 1 Agent')
 parser.add_argument('agent2', type=str, help='The Player 2 Agent')
 parser.add_argument('game', type=str, help='The game to play on')
@@ -57,7 +60,8 @@ if __name__ == '__main__':
         'agent1_mean_accumulated_reward_sum': 0,
         'agent2_name': args['agent2'],
         'agent2_mean_action_duration_sum': 0,
-        'agent2_mean_accumulated_reward_sum': 0
+        'agent2_mean_accumulated_reward_sum': 0,
+        'mean_run_duration': 0
     }
     game_runner(agent1(**agent1_args), agent2(**agent2_args), csv_data, log_name)\
         .run(game_state(**gs_args), args['max_rounds'])

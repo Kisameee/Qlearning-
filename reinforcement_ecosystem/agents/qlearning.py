@@ -101,7 +101,8 @@ class DeepQLearningAgent(Agent):
                 self.learn()
                 self.game_count += 1
                 if (self.use_target and self.game_count % self.target_update_every) == 0:
-                    print('Updating Target Network')
+                    if __debug__:
+                        print('Updating Target Network')
                     self.QTarget.set_weights(self.Q.get_weights())
 
     def act(self, player_index: int, information_state: InformationState, available_actions: Iterable[int]) -> int:
@@ -149,7 +150,8 @@ class DeepQLearningAgent(Agent):
         self.s_next_duplicated = None
         self.s_next_available_actions = None
         if self.print_error and self.learn_steps % self.print_error_every == 0:
-            print(self.accumulated_error / self.learn_steps)
+            if __debug__:
+                print(self.accumulated_error / self.learn_steps)
             self.accumulated_error = 0
 
 

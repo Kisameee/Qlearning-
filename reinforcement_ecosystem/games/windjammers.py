@@ -69,7 +69,8 @@ class WindJammersRunner(GameRunner):
 class WindJammersInformationState(InformationState):
 
     def __hash__(self):
-        raise NotImplementedError()
+        # raise NotImplementedError
+        return hash(self.vectorize().tobytes())
 
     def __eq__(self, other):
         return \
@@ -132,7 +133,7 @@ class WindJammersInformationState(InformationState):
             str_acc += "\n"
         return str_acc
 
-    def vectorize(self):
+    def vectorize(self) -> np.ndarray:
         return np.array([
             self.player1_position[0],
             self.player1_position[1],
