@@ -73,6 +73,6 @@ class TensorboardInstrumentedWindJammersRunner(GameRunner):
 
 if __name__ == "__main__":
     print("Rdm vs Rdm")
-    print(TensorboardInstrumentedWindJammersRunner(RandomAgent(),
+    print(TensorboardInstrumentedWindJammersRunner((),
                                                    RandomAgent(),
                                                    log_dir_root="./logs/Rdm_Vs_Rdm").run(1000))

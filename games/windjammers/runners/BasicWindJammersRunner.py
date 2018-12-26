@@ -1,6 +1,7 @@
 import os
 from time import sleep
 
+from agents.TabularQLearningAgent import TabularQLearningAgent
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"  # see issue #152
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
@@ -75,12 +76,17 @@ class BasicWindJammersRunner(GameRunner):
 
 if __name__ == "__main__":
 
-    print("Rdm vs Rdm")
-    print(BasicWindJammersRunner(RandomAgent(),
-                               RandomAgent(),
-                               print_and_reset_score_history_threshold=10).run(10000))
+    # print("Rdm vs Rdm")
+    # print(BasicWindJammersRunner(RandomAgent(),
+    #                            RandomAgent(),
+    #                            print_and_reset_score_history_threshold=10).run(10000))
 
     # print("CommandLine vs CommandLine")
     # print(BasicWindJammersRunner(CommandLineAgent(),
     #                              CommandLineAgent(),
     #                             print_and_reset_score_history_threshold=100).run(100))
+
+    print("Rdm vs Rdm")
+    print(BasicWindJammersRunner(TabularQLearningAgent(),
+                                 RandomAgent(),
+                                 print_and_reset_score_history_threshold=10).run(10000))

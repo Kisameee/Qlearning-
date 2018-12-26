@@ -103,8 +103,8 @@ class WindJammersGameState(GameState):
 
         if self.frisbee_hit_top_or_bottom():
             self.frisbee_position = np.array([self.frisbee_position[0],
-                                             (1.0 - self.frisbee_radius) if self.frisbee_position[1] > 0 else
-                                             (-1.0 + self.frisbee_radius)])
+                                              (1.0 - self.frisbee_radius) if self.frisbee_position[1] > 0 else
+                                              (-1.0 + self.frisbee_radius)])
             self.frisbee_speed = np.array([self.frisbee_speed[0], -self.frisbee_speed[1]])
 
         if self.frisbee_hit_player1():
