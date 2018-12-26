@@ -20,6 +20,7 @@ class TabularQLearningAgent(Agent):
             self.r = (self.r if self.r else 0) + reward
             self.t = terminal
 
+
             if terminal:
                 self.reward_history += (1 if reward == 1 else 0, 1 if reward == -1 else 0, 1 if reward == 0 else 0)
                 self.learn()
