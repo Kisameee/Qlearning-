@@ -55,15 +55,15 @@ If you want to print out debug stuff remove the -O flags for python
 
 ### Available agents
 Tested on TicTacToe (WindJammers should work too)
-- Random  |  OK
-- RandomRollout  OK
-- ReinforceClassic  |  NOK  |  "y_pred" Problem
-- ReinforceClassicWithMultipleTrajectories  |  NOK  |  "y_pred" Problem
-- MOISMCTSWithValueNetwork  |  OK
-- MOISMCTSWithRandomRollouts  |  OK
-- MOISMCTSWithRandomRolloutsExpertThenApprentice  |  OK
-- TabularQLearning  |  OK
-- DeepQLearning  |  OK
+- Random
+- RandomRollout
+- ReinforceClassic
+- ReinforceClassicWithMultipleTrajectories
+- MOISMCTSWithValueNetwork
+- MOISMCTSWithRandomRollouts 
+- MOISMCTSWithRandomRolloutsExpertThenApprentice
+- TabularQLearning 
+- DeepQLearning
 
 
 ### Available game

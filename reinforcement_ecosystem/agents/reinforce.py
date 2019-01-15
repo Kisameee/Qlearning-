@@ -72,12 +72,14 @@ class ReinforceClassicBrain:
         """
         return self.model.predict([states, actions])
 
-    def reinforce_loss(self, y_true: Any, y_pred: Any) -> Any:
+    @staticmethod
+    def reinforce_loss(y_true: 'tensorflow.Tensor', y_pred: 'tensorflow.Tensor') -> 'tensorflow.Tensor':
         """
-        ???
-        :param y_true: ???
-        :param y_pred: ???
-        :return: ???
+        Custom loss function for the reinforce model
+        Compute the mean of the inverted log of the prediction by the product of the true output
+        :param y_true: Real outputs
+        :param y_pred: Predicted output of the model
+        :return: The computed loss as `tensorflow.Tensor`
         """
         return K.mean(-K.log(y_pred) * y_true)
 
@@ -167,8 +169,8 @@ class ReinforceClassicWithMultipleTrajectoriesAgent(Agent):
     Reinforce Classic With Multiple Trajectories  Agent class for playing with it
     """
 
-    def __init__(self, state_size: int, action_size: int, num_layers: int = 5, num_neuron_per_layer: int = 128,
-                 train_every_X_trajectories: int = 16):
+    def __init__(self, state_size: int, action_size: int, num_layers: int = 5,
+                 num_neuron_per_layer: int = 128, train_every_X_trajectories: int = 16):
         """
         Initializer for the `ReinforceClassicWithMultipleTrajectoriesAgent` class
         :param state_size: ???
