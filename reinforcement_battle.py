@@ -8,19 +8,16 @@ Module for command line battle between agents on a game
 
 
 import argparse
-from itertools import product
+# from itertools import product
 import json
-from pprint import pprint
 import os
 
-# import reinforcement_ecosystem.agents as agents
-# import reinforcement_ecosystem.games as games
-from reinforcement_ecosystem.agents import *
-from reinforcement_ecosystem.games import *
+import reinforcement_ecosystem.agents as agents
+import reinforcement_ecosystem.games as games
 
-list_of_agents_couple = set(product((el for el in globals().keys() if 'Agent' in el), repeat=2))
-parser = argparse.ArgumentParser(description='Command line tool for battling two agents on a game',
-                                 epilog='List of all agents couples :\n' + str(list_of_agents_couple))
+
+# list_of_agents_couple = set(product((el for el in globals().keys() if 'Agent' in el), repeat=2))
+parser = argparse.ArgumentParser(description='Command line tool for battling two agents on a game')
 parser.add_argument('agent1', type=str, help='The Player 1 Agent')
 parser.add_argument('agent2', type=str, help='The Player 2 Agent')
 parser.add_argument('game', type=str, help='The game to play on')
@@ -37,15 +34,14 @@ if __name__ == '__main__':
     if not os.path.exists('./csv_logs'):
         os.mkdir('./csv_logs', 0o755)
     args = vars(parser.parse_args())
-    agent1 = globals()['{}Agent'.format(args['agent1'])]  # try getattr ?
+    agent1 = getattr(agents, f"{args['agent1']}Agent")
     agent1_args = json.loads(args['agent1_args']) if args['agent1_args'] else {}
-    agent2 = globals()['{}Agent'.format(args['agent2'])]  # try getattr ?
+    agent2 = getattr(agents, f"{args['agent2']}Agent")
     agent2_args = json.loads(args['agent2_args']) if args['agent2_args'] else {}
-    game_runner = globals()['{}Runner'.format(args['game'])]  # try getattr ?
-    game_state = globals()['{}GameState'.format(args['game'])]  # try getattr ?
+    game_runner = getattr(games, f"{args['game']}Runner")
+    game_state = getattr(games, f"{args['game']}GameState")
     gs_args = json.loads(args['gs_args']) if args['gs_args'] else {}
-    log_name = '{}__{}_VS_{}__{}'.format(args['game'], args['agent1'],
-                                         args['agent2'], str(args['max_rounds']))
+    log_name = f"{args['game']}__{args['agent1']}_VS_{args['agent2']}__{args['max_rounds']}"
     if args['no_gpu']:
         os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'  # see issue #152
         os.environ['CUDA_VISIBLE_DEVICES'] = '-1'

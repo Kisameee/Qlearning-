@@ -6,6 +6,8 @@ This project aim to teach us reinforcement learning by implementing the popular 
 - Better docstrings (understand '???' comments)
 - Better type hints (find type of 'Any' type hints)
 - Transform get methods in python property
+- Refactor GameRunner random_rollout_run function to be more generic 
+- Add application logs
 - Tests everything
 - Profile and rework heavy functions
   - WindJammersGameState.compute_current_score_and_end_game_more_efficient
@@ -13,9 +15,11 @@ This project aim to teach us reinforcement learning by implementing the popular 
   - WindJammersGameState.frisbee_hitplayer2
 - Comments Windjamers game
 - Clean game_runner.py and reinforcement_battle.py
+- Fix Reinforce "y_pred" bug
 
 
 ## How to use ?
+Be careful you need Python 3.6 or higher
 You have to use the reinforcement_battle.py in command line.
 
 Example :
@@ -35,6 +39,10 @@ with the passed args for the agent2 aka the DeepQLearning agent
 Everything is logged into a tf_logs for the Tensorflow logs,
 and in csv_logs for a custom CSV counter parts.
 
+Basically pass the class parameter as JSON in the --agentX_args,
+where X is the number of the agent based on his order in the command
+
+
 ### Tips
 You can configure things in the reinforcement_ecosytem/config.py
 
@@ -42,11 +50,23 @@ Agent name and Game name should correspond to their class in the code,
 for example if you want to a random agent (you should use "Random"),
 just strip the "Agent" or "GameRunner" part of the class.
 
-You can see all the couple of agents avaible with "--help"
-
 If you want to print out debug stuff remove the -O flags for python
 
-### Avaiable game
+
+### Available agents
+Tested on TicTacToe (WindJammers should work too)
+- Random  |  OK
+- RandomRollout  OK
+- ReinforceClassic  |  NOK  |  "y_pred" Problem
+- ReinforceClassicWithMultipleTrajectories  |  NOK  |  "y_pred" Problem
+- MOISMCTSWithValueNetwork  |  OK
+- MOISMCTSWithRandomRollouts  |  OK
+- MOISMCTSWithRandomRolloutsExpertThenApprentice  |  OK
+- TabularQLearning  |  OK
+- DeepQLearning  |  OK
+
+
+### Available game
 For the moment there is :
  - TicTacToe
  - WindJammers

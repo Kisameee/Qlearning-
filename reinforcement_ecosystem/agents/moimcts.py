@@ -151,6 +151,7 @@ class MOIMCTSMixin:
             action_to_execute = child_action['action_id']
             self.add_visited_node(current_node, child_action, current_player)
             gs, reward, terminal = gs.step(current_player, action_to_execute)
+            # return gs, info_state, reward, terminal
 
 
 class MOISMCTSWithRandomRolloutsAgent(Agent, MOIMCTSMixin):
@@ -158,18 +159,19 @@ class MOISMCTSWithRandomRolloutsAgent(Agent, MOIMCTSMixin):
     Deep MOISMCTS with random rollouts Agent class for playing with it
     """
 
-    def __init__(self, iteration_count: int, runner: GameRunner, reuse_tree: bool = True, k: float = 0.2):
+    def __init__(self, iteration_count: int, runner: str, reuse_tree: bool = True, k: float = 0.2):
         """
         Initializer for the `MOISMCTSWithRandomRolloutsAgent` class
         :param iteration_count: ???
-        :param runner: ???
+        :param runner: The GameRunner to rollout on
         :param reuse_tree: If we should reuse an existing tree
         :param k: ???
         """
-        super(MOIMCTSMixin, self).__init__(k)
+        import reinforcement_ecosystem.games as games  # Avoid Circular import, Really Bad
+        super(MOISMCTSWithRandomRolloutsAgent, self).__init__(k=k)
         self.iteration_count = iteration_count
         self.reuse_tree = reuse_tree
-        self.runner = runner
+        self.runner = getattr(games, f'{runner}Runner')
 
     def observe(self, reward: float, terminal: bool) -> None:
         """
@@ -202,7 +204,7 @@ class MOISMCTSWithRandomRolloutsAgent(Agent, MOIMCTSMixin):
                 self.add_visited_node(node, child_action, current_player)
                 gs, reward, terminal = gs.step(current_player, action_to_execute)
             # EVALUATE
-            scores = self.runner.run(initial_game_state=gs, max_rounds=1)
+            scores = self.runner.random_rollout_run(gs, 1)
             # BACKPROPAGATE SCORE
             for player_id in self.current_iteration_selected_nodes.keys():
                 visited_nodes = self.current_iteration_selected_nodes[player_id]
@@ -225,7 +227,7 @@ class MOISMCTSWithRandomRolloutsExpertThenApprenticeAgent(Agent, MOIMCTSMixin):
         """
         Initializer for the `MOISMCTSWithRandomRolloutsExpertThenApprenticeAgent` class
         :param iteration_count: ???
-        :param runner: ???
+        :param runner: The GameRunner to rollout on
         :param state_size: ???
         :param action_size: ???
         :param reuse_tree: If we should reuse an existing tree or not
@@ -233,14 +235,15 @@ class MOISMCTSWithRandomRolloutsExpertThenApprenticeAgent(Agent, MOIMCTSMixin):
         :param evaluation_episodes: ???
         :param k: ???
         """
-        super(MOIMCTSMixin, self).__init__(k)
+        import reinforcement_ecosystem.games as games  # Avoid Circular import, Really Bad
+        super(MOISMCTSWithRandomRolloutsExpertThenApprenticeAgent, self).__init__(k=k)
         self.iteration_count = iteration_count
         self.reuse_tree = reuse_tree
         self.training_episodes = training_episodes
         self.evaluation_episodes = evaluation_episodes
         self.state_size = state_size
         self.action_size = action_size
-        self.runner = runner
+        self.runner = getattr(games, f'{runner}Runner')
         self.current_episode = 0
         self.X = []
         self.Y = []
@@ -307,7 +310,7 @@ class MOISMCTSWithRandomRolloutsExpertThenApprenticeAgent(Agent, MOIMCTSMixin):
                 self.add_visited_node(node, child_action, current_player)
                 gs, reward, terminal = gs.step(current_player, action_to_execute)
             # EVALUATE
-            scores = self.runner.run(initial_game_state=gs, max_rounds=1)
+            scores = self.runner.random_rollout_run(gs, 1)
             # BACKPROPAGATE SCORE
             for player_id in self.current_iteration_selected_nodes.keys():
                 visited_nodes = self.current_iteration_selected_nodes[player_id]
@@ -338,7 +341,7 @@ class MOISMCTSWithValueNetworkAgent(Agent, MOIMCTSMixin):
         :param k: ???
         :param gamma: ???
         """
-        super(MOIMCTSMixin, self).__init__(k)
+        super(MOISMCTSWithValueNetworkAgent, self).__init__(k=k)
         self.iteration_count = iteration_count
         self.reuse_tree = reuse_tree
         self.gamma = gamma

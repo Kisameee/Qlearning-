@@ -228,7 +228,8 @@ class PPOWithMultipleTrajectoriesMultiOutputsAgent(Agent):
             chosen_index = np.random.choice(list(range(num_actions)), p=probabilities)
             chosen_action = available_actions[chosen_index]
         else:
-            print("No action eligible, this should be extremely rare")
+            if __debug__:
+                print("No action eligible, this should be extremely rare")
             chosen_index = np.random.choice(list(range(num_actions)))
             chosen_action = available_actions[chosen_index]
         transition = dict()

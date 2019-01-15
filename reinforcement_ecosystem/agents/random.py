@@ -12,7 +12,7 @@ from typing import Iterable
 
 import numpy as np
 
-from reinforcement_ecosystem.environments import InformationState, Agent, GameRunner
+from reinforcement_ecosystem.environments import InformationState, Agent
 
 
 class RandomAgent(Agent):
@@ -45,9 +45,10 @@ class RandomRolloutAgent(Agent):
     Random Rollout Agent class for playing with it
     """
 
-    def __init__(self, num_rollouts_per_available_action, runner: GameRunner):
+    def __init__(self, num_rollouts_per_available_action, runner: str):
+        import reinforcement_ecosystem.games as games  # Avoid Circular import, Really Bad
         self.num_rollouts_per_available_action = num_rollouts_per_available_action
-        self.runner = runner
+        self.runner = getattr(games, f'{runner}Runner')
 
     def observe(self, reward: float, terminal: bool) -> None:
         """
@@ -75,7 +76,7 @@ class RandomRolloutAgent(Agent):
             # Two player zero sum game hypothesis
             player_score = (1 if player_index == 0 else -1) * score
             if not terminal:
-                history = self.runner.run(self.num_rollouts_per_available_action, gs)
+                history = self.runner.random_rollout_run(gs, self.num_rollouts_per_available_action)
                 player_score += history[player_index] - history[(player_index + 1) % 2]
             player_score = player_score / (1.0 if terminal else self.num_rollouts_per_available_action)
             action_scores[i] = player_score

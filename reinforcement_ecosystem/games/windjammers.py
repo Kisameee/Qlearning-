@@ -7,12 +7,13 @@ Module for for playing wind jammers
 """
 
 
-from typing import Iterable
+from typing import Iterable, Tuple
 from time import time
 
 import numpy as np
 
 from reinforcement_ecosystem.environments import InformationState, GameState, Agent, GameRunner
+from reinforcement_ecosystem.agents.random import RandomAgent
 
 
 class WindJammersRunner(GameRunner):
@@ -39,7 +40,7 @@ class WindJammersRunner(GameRunner):
         mean_action_duration_sum = {0: 0.0, 1: 0.0}
         mean_accumulated_reward_sum = {0: 0.0, 1: 0.0}
         while not terminal:
-            # print(gs)
+            # print(gs) Uncomment to print GS aka the WindJammers board
             current_player = gs.get_current_player_id()
             action = 0
             if current_player != -1:
@@ -61,15 +62,41 @@ class WindJammersRunner(GameRunner):
             'mean_action_duration_sum_a1': mean_action_duration_sum[0],
             'mean_action_duration_sum_a2': mean_action_duration_sum[1],
             'mean_accumulated_reward_sum_a1': mean_accumulated_reward_sum[0],
-            'mean_accumulated_reward_sum_a2': mean_accumulated_reward_sum[1]
+            'mean_accumulated_reward_sum_a2': -mean_accumulated_reward_sum[1]
         }
         return stats
+
+    @staticmethod
+    def random_rollout_run(igs: GameState, rollouts: int) -> Tuple:
+        """
+        Random Rollout Runner for TicTacToe
+        :param igs: Initial Game State to rollout on
+        :param rollouts: The number of rollout to do
+        :return: The tuple representing the history of games
+        """
+        gs = igs.copy_game_state()
+        agents = RandomAgent(), RandomAgent()
+        history = [0.0, 0.0, 0.0]
+        round_step = 0
+        scores, terminal = gs.get_current_scores()
+        while round_step < rollouts:
+            while not terminal:
+                current_player = gs.get_current_player_id()
+                action_ids = gs.get_available_actions_id_for_player(current_player)
+                info_state = gs.get_information_state_for_player(current_player)
+                action = agents[current_player].act(current_player, info_state, action_ids)
+                (gs, score, terminal) = gs.step(current_player, action)
+                agents[0].observe(score, terminal)
+                agents[1].observe(-score, terminal)
+                if not terminal:
+                    history += (score if score > 0 else 0.0, -score if score < 0 else 0.0, 0.0)
+            round_step += 1
+        return tuple(history)
 
 
 class WindJammersInformationState(InformationState):
 
     def __hash__(self):
-        # raise NotImplementedError
         return hash(self.vectorize().tobytes())
 
     def __eq__(self, other):

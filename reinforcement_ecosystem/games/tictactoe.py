@@ -8,13 +8,12 @@ Module for for playing tic tac toe
 
 
 from time import time
-from typing import Any, Hashable, Iterable
+from typing import Any, Hashable, Iterable, Tuple
 
 import numpy as np
 
 from reinforcement_ecosystem.environments import InformationState, GameState, GameRunner, Agent
-from reinforcement_ecosystem.agents import RandomAgent
-from reinforcement_ecosystem.config import TF_LOG_DIR
+from reinforcement_ecosystem.agents.random import RandomAgent
 
 
 class TicTacToeRunner(GameRunner):
@@ -61,9 +60,35 @@ class TicTacToeRunner(GameRunner):
             'mean_action_duration_sum_a1': mean_action_duration_sum[0],
             'mean_action_duration_sum_a2': mean_action_duration_sum[1],
             'mean_accumulated_reward_sum_a1': mean_accumulated_reward_sum[0],
-            'mean_accumulated_reward_sum_a2': mean_accumulated_reward_sum[1]
+            'mean_accumulated_reward_sum_a2': -mean_accumulated_reward_sum[1]
         }
         return stats
+
+    @staticmethod
+    def random_rollout_run(igs: GameState, rollouts: int) -> Tuple:
+        """
+        Random Rollout Runner for TicTacToe
+        :param igs: Initial Game State to rollout on
+        :param rollouts: The number of rollout to do
+        :return: The tuple representing the history of games
+        """
+        gs = igs.copy_game_state()
+        agents = RandomAgent(), RandomAgent()
+        history = [0, 0, 0]
+        round_step = 0
+        scores, terminal = gs.get_current_scores()
+        while round_step < rollouts:
+            while not terminal:
+                current_player = gs.get_current_player_id()
+                action_ids = gs.get_available_actions_id_for_player(current_player)
+                info_state = gs.get_information_state_for_player(current_player)
+                action = agents[current_player].act(current_player, info_state, action_ids)
+                (gs, score, terminal) = gs.step(current_player, action)
+                agents[current_player].observe((1 if current_player == 0 else -1) * score, terminal)
+                if terminal:
+                    history += (1 if score == 1 else 0, 1 if score == -1 else 0, 1 if score == 0 else 0)
+            round_step += 1
+        return tuple(history)
 
 
 class TicTacToeInformationState(InformationState):
@@ -265,9 +290,3 @@ class TicTacToeGameState(GameState):
         """
         winner, terminal = self.compute_current_score_and_end_game_more_efficient()
         return np.array([winner, -winner]), terminal
-
-
-if __name__ == "__main__":
-    print('Random vs Random')
-    TicTacToeRunner(RandomAgent(), RandomAgent(), tf_log_dir=TF_LOG_DIR + '/Rdm_Vs_Rdm')\
-        .run(TicTacToeGameState(), 1000)

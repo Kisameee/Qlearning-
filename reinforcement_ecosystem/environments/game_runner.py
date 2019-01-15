@@ -8,6 +8,7 @@ Module for defining GameRunners
 
 
 from csv import DictWriter
+from typing import Tuple
 
 import tensorflow as tf
 
@@ -35,7 +36,12 @@ class GameRunner:
         self.csv_data = csv_data
 
     def _run(self, initial_game_state: GameState) -> dict:
-        raise NotImplementedError()
+        """
+        Run the game with a specific `GameState` for a round
+        :param initial_game_state: The gamestate to play on
+        :return: The dict of stats of the game
+        """
+        raise NotImplementedError
 
     def run(self, initial_game_state: GameState, max_rounds: int = -1) -> None:
         """
@@ -78,6 +84,16 @@ class GameRunner:
                 self.csv_data['mean_run_duration'] = mean_run_duration
                 dw.writerow(self.csv_data)
             episode_id += 1
+
+    @staticmethod
+    def random_rollout_run(igs: GameState, rollouts: int) -> Tuple:
+        """
+        Random Rollout Runner to implement for a given GameRunner
+        :param igs: Initial Game State to rollout on
+        :param rollouts: The number of rollout to do
+        :return: The tuple representing the history of games
+        """
+        raise NotImplementedError('Random Rollout not available for this GameRunner, or not implemented yet')
 
     def __del__(self) -> None:
         """
