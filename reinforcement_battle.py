@@ -41,8 +41,8 @@ if __name__ == '__main__':
     game_runner = getattr(games, f"{args['game']}Runner")
     game_state = getattr(games, f"{args['game']}GameState")
     gs_args = json.loads(args['gs_args']) if args['gs_args'] else {}
-    agent1_log_args = '_'.join(f'{k}:{v}' for k, v in agent1_args.items())
-    agent2_log_args = '_'.join(f'{k}:{v}' for k, v in agent2_args.items())
+    agent1_log_args = '_'.join(f'{k}-{v}' for k, v in agent1_args.items())
+    agent2_log_args = '_'.join(f'{k}-{v}' for k, v in agent2_args.items())
     log_name = f"{args['game']}__{args['agent1']}_VS_{args['agent2']}__{args['max_rounds']}"\
         f"__[{agent1_log_args}]__[{agent2_log_args}]"
     if args['no_gpu']:
