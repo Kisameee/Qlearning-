@@ -41,14 +41,17 @@ if __name__ == '__main__':
     game_runner = getattr(games, f"{args['game']}Runner")
     game_state = getattr(games, f"{args['game']}GameState")
     gs_args = json.loads(args['gs_args']) if args['gs_args'] else {}
-    log_name = f"{args['game']}__{args['agent1']}_VS_{args['agent2']}__{args['max_rounds']}"
+    agent1_log_args = '_'.join(f'{k}:{v}' for k, v in agent1_args.items())
+    agent2_log_args = '_'.join(f'{k}:{v}' for k, v in agent2_args.items())
+    log_name = f"{args['game']}__{args['agent1']}_VS_{args['agent2']}__{args['max_rounds']}"\
+        f"__[{agent1_log_args}]__[{agent2_log_args}]"
     if args['no_gpu']:
         os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'  # see issue #152
         os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
     print(args['agent1'], 'VS', args['agent2'], 'on', args['game'], 'for', str(args['max_rounds']), 'rounds')
     csv_data = {
         'game': args['game'],
-        'battle_name': '{}_VS_{}'.format(args['agent1'], args['agent2']),
+        'battle_name': f"{args['agent1']}_VS_{args['agent2']}",
         'num_of_games': args['max_rounds'],
         'agent1_name': args['agent1'],
         'round_number': 0,

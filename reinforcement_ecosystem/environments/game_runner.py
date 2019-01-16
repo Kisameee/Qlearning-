@@ -31,8 +31,8 @@ class GameRunner:
         :param log_name: The name of the logs
         """
         self.agents = agent1, agent2
-        self.csv_writer = open('{}/{}.csv'.format(CSV_LOG_DIR, log_name), 'w')
-        self.tf_writer = tf.summary.FileWriter('{}/{}'.format(TF_LOG_DIR, log_name))
+        self.csv_writer = open(f'{CSV_LOG_DIR}/{log_name}.csv', 'w')
+        self.tf_writer = tf.summary.FileWriter(f'{TF_LOG_DIR}/{log_name}')
         self.csv_data = csv_data
 
     def _run(self, initial_game_state: GameState) -> dict:
